@@ -12,7 +12,7 @@ class Icicle < Monome::Application
 		@midi = LiveMIDI.new(:clock => Clock.new(30), # confusion!!!!!!!!!!
 		                     :logging => false,
 		                     :midi_destination => 0)
-		@grids = ScrambleGrid.new(0.5, 64)
+		@grids = ScrambleGrid.new(0.75, 64)
 		@sequence = []
 	end
 	
