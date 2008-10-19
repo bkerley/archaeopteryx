@@ -5,7 +5,6 @@ require 'scramble_grid'
 class Icicle < Monome::Application
 	every 0.5,	:metronome
 	every 0.25,	:sequence
-	every 0.25,	:tick
 	
 	on :initialize do
 		probability = ARGV[0].to_f || 0.75
@@ -14,11 +13,6 @@ class Icicle < Monome::Application
 		                     :midi_destination => 0)
 		@grids = ScrambleGrid.new(probability, 64)
 		@sequence = []
-	end
-	
-	on :tick do
-		next unless @metronome
-		grid[0,0] = 1
 	end
 	
 	on :metronome do
