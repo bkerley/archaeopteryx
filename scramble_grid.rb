@@ -9,17 +9,22 @@ class ScrambleGrid
 		@grid[cell]
 	end
 	
+	def scramble_to(p)
+		@probability = p
+		self.scramble
+	end
+	
 	def scramble
 		@grid = []
 		@count.times do |n|
-			@grid[n] = (rand > @probability) ? nil : rand(@count)
+			@grid[n] = (rand() > @probability) ? nil : rand(@count)
 		end
 		dump
 	end
 	
 	def dump
 		@grid.each_index do |i|
-			$stdout.print "#{i},#{@grid[i].to_s}\t"
+			$stdout.print "#{i},#{@grid[i]}\t"
 		end
 		$stdout.puts
 	end
