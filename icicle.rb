@@ -55,17 +55,49 @@ class Icicle < Monome::Application
 		when 1
 			@grids.scramble
 			puts "scrambled grid"
-			device.unclear
+			null_light
 		when 2
 			@metronome = !@metronome
 			puts "metronome is #{@metronome ? 'GO' : 'off'}"
+		when 4
+			@grids.scramble_to 0.0
+			puts "scrambled 0.0"
+			null_light
+		when 5
+			@grids.scramble_to 0.5
+			puts "scrambled 0.5"
+			null_light
+		when 6
+			@grids.scramble_to 0.75
+			puts "scrambled 0.75"
+			null_light
+		when 7
+			@grids.scramble_to 1.0
+			puts "scrambled 1.0"
+			null_light
 		end
 	end
 	
 	private
-	def play(note)
+	def null_light
+		64.times do |i|
+			light(i) if @grids.next(i).nil?
+		end
+	end
+	
+	def light(note)
 		grid[note % 8, note / 8] = 1
-		@midi.play(Note.new(0, note + 48, 0.25, 100))
+	end
+	
+	def play(note)
+		scale = MINOR_SCALE
+		light(note)
+		base = 32
+		octave = note / 8
+		position = note % 8
+		note = base + (octave * 12) + scale[position % scale.length]
+		
+		@midi.play(Note.new(0, note, 1, 100))
 	end
 end
 
