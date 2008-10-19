@@ -51,9 +51,11 @@ class Icicle < Monome::Application
 		when 0
 			@sequence = []
 			puts "cleared sequence"
+			device.unclear
 		when 1
 			@grids.scramble
 			puts "scrambled grid"
+			device.unclear
 		when 2
 			@metronome = !@metronome
 			puts "metronome is #{@metronome ? 'GO' : 'off'}"
