@@ -8,11 +8,11 @@ class Icicle < Monome::Application
 	every 0.25,	:tick
 	
 	on :initialize do
-		
+		probability = ARGV[0].to_f || 0.75
 		@midi = LiveMIDI.new(:clock => Clock.new(30), # confusion!!!!!!!!!!
 		                     :logging => false,
 		                     :midi_destination => 0)
-		@grids = ScrambleGrid.new(0.75, 64)
+		@grids = ScrambleGrid.new(probability, 64)
 		@sequence = []
 	end
 	
