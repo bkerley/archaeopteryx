@@ -1,8 +1,23 @@
 class ScrambleGrid
 	def initialize(probability, count)
 		@count = count
-		@probability = probability
-		scramble
+		clear_sequence
+		scramble_to(probability)
+	end
+	
+	def add_sequence(cell)
+		add = self.next(cell)
+		@sequence << add unless add.nil?
+	end
+	
+	def clear_sequence
+		@sequence = []
+	end
+	
+	def iterate
+		returning @sequence.dup do
+			@sequence = @sequence.map{|e| next(e)}.reject{|e|e.nil?}
+		end
 	end
 	
 	def next(cell)
