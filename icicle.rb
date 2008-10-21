@@ -8,7 +8,7 @@ class Icicle < Monome::Application
 	every 0.25,	:sequence
 	
 	on :initialize do
-		probability = ARGV[0].to_f || 0.75
+		probability = ARGV[0] ? ARGV[0].to_f : 0.75
 		@midi = LiveMIDI.new(:clock => Clock.new(30), # confusion!!!!!!!!!!
 		                     :logging => false,
 		                     :midi_destination => 0)
@@ -27,7 +27,7 @@ class Icicle < Monome::Application
 		next if column == 0
 		next unless state == 1
 		note = (row * 8) + column
-		play(note)
+		play(note, @cursor)
 		current_grid.add_sequence(note)
 	end
 	
@@ -39,9 +39,9 @@ class Icicle < Monome::Application
 			current_grid.clear_sequence
 			puts "cleared sequence"
 			device.unclear
-		when 1
+		when 1	
+			puts "scramble grid"
 			current_grid.scramble
-			puts "scrambled grid"
 			null_light
 		when 2
 			@cursor = (@cursor - 1) % @grids.length
@@ -83,9 +83,9 @@ class Icicle < Monome::Application
 		grid[note % 8, note / 8] = 1
 	end
 	
-	def play(note, channel=0)
+	def play(note, channel)
 		scale = MINOR_SCALE
-		light(note)
+		light(note) if channel == @cursor
 		base = 32
 		octave = note / 8
 		position = note % 8
