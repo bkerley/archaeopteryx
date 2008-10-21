@@ -16,7 +16,7 @@ class ScrambleGrid
 	
 	def iterate
 		returning @sequence.dup do
-			@sequence = @sequence.map{|e| next(e)}.reject{|e|e.nil?}
+			@sequence = @sequence.map{|e| self.next(e)}.reject{|e|e.nil?}
 		end
 	end
 	
@@ -38,9 +38,13 @@ class ScrambleGrid
 	end
 	
 	def dump
-		@grid.each_index do |i|
-			$stdout.print "#{i},#{@grid[i]}\t"
+		box = Math.sqrt(@count).round
+		box.times do |row|
+			box.times do |column|
+				print @grid[column*box + row] ? ' ' : 'X'
+			end
+			puts "|"
 		end
-		$stdout.puts
+		puts "-"*box
 	end
 end
