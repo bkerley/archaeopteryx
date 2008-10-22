@@ -6,7 +6,8 @@ module Archaeopteryx
       @beats = attributes[:beats] || 16
       midi_destination = attributes[:midi_destination] || 0
       @evil_timer_offset_wtf = attributes[:evil_timer_offset_wtf]
-      @midi = LiveMIDI.new(:clock => @clock = attributes[:clock], # confusion!!!!!!!!!!
+			@clock = attributes[:clock]
+      @midi = attributes[:midi] || LiveMIDI.new(:clock => @clock, # confusion!!!!!!!!!!
                            :logging => attributes[:logging] || false,
                            :midi_destination => midi_destination)
     end
