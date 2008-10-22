@@ -46,9 +46,12 @@ LOG_PLAYBACK
           @timer.at(on_time + midi_note.duration) {note_off(midi_note)}
         end
         
+        def send(message)
+          send_controller_message(message.midi_channel, message.controller_number, message.value)
+        end
         def send_controller_message(midi_channel, controller_number, value, on_time = @clock.time)
           on_time += @clock.start
-          # puts "scheduling for #{on_time}" if @logging
+          puts "scheduling #{controller_number} for #{on_time}" if @logging
           @timer.at(on_time) do
             control(midi_channel, controller_number, value)
           end
@@ -70,6 +73,10 @@ LOG_PLAYBACK
 
         def close
           CoreMIDI.mIDIClientDispose(@client)
+        end
+        
+        def clear
+          @timer.flush
         end
 
         def message(*args)
