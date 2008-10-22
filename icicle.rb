@@ -6,15 +6,33 @@ require 'scramble_grid'
 
 class Icicle < Monome::Application
 	every 0.25,	:sequence
+	every 0.25,	:start_arx
 	
 	on :initialize do
+
 		probability = ARGV[0] ? ARGV[0].to_f : 0.75
-		@midi = LiveMIDI.new(:clock => Clock.new(30), # confusion!!!!!!!!!!
+		$clock = Clock.new(120)
+		$mutation = L{|measure| 0 == (measure - 1) % 2}
+		$measures = 4
+		
+		@midi = LiveMIDI.new(:clock => $clock, # confusion!!!!!!!!!!
 		                     :logging => false,
 		                     :midi_destination => 0)
 		@grids = (0..7).map {ScrambleGrid.new(probability, 64)}
 		@cursor = 0
 		@sequence = []
+		@loop = Arkx.new(
+			:clock => $clock, # rename Arkx to Loop
+			:logging => false,
+			:evil_timer_offset_wtf => 0.2,
+			:midi=>@midi,
+			:generator => Mix.new(
+				:rhythms => [
+					Rhythm.new(:drumfile => "harmonic_cycle.rb", :mutation => $mutation)
+				]
+			)
+		)
+		Thread.new{@loop.go}
 	end
 	
 	on :sequence do
