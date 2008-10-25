@@ -50,7 +50,7 @@ class Sequencer < Monome::Application
 			@octaves[@selector] = @octaves[@selector] + 1
 			puts "octave #{@octaves[@selector]}"
 		when 4
-			if @solo
+			if @solo == @selector
 				@solo = nil
 				puts "Solo off"
 				next
