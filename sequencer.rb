@@ -7,39 +7,59 @@ class Sequencer < Monome::Application
 	every 0.25,	:sequence
 	
 	on :initialize do
-		@midi = LiveMIDI.new(:clock => Clock.new(30), # confusion!!!!!!!!!!
+		@midi = LiveMIDI.new(:clock => Clock.new(30),
 		                     :logging => false,
 		                     :midi_destination => 0)
-		@grids = (0..7).map {ScrambleGrid.new(probability, 64)}
+		@grids = (0..7).map {Array.new 8, false}
 		@cursor = 0
 	end
 	
 	on :sequence do
 		device.clear
-		sequences = @grids.map(&:iterate)
-		sequences.each_index{|i|sequences[i].each{|n| play(n, i)}}
+		light_hot
+		@grids[@cursor].each_with_index do |c, r|
+			next unless c
+			play(r)
+		end
+		light_column @cursor
+		cursor_cycle
 	end
 	
 	on :press do |row, column, state|
+		@grids[row][column] = !@grids[row][column] unless state.zero?
 	end
 	
 	private
+	def cursor_cycle
+		@cursor = (@cursor + 1) % 8
+	end
+	
 	def current_grid
 		@grids[@cursor]
 	end
 	
-	def light(note)
-		grid[note % 8, note / 8] = 1
+	def light_hot
+		@grids.each_with_index do |r, col|
+			r.each_with_index do |v, row|
+				next unless v
+				light(row, col)
+			end
+		end
 	end
 	
-	def play(note, channel)
-		scale = MAJOR_SCALE
-		light(note) if channel == @cursor
-		base = 32
-		octave = note / 8
-		position = note % 8
-		note = base + (octave * 12) + scale[position % scale.length]
-		
+	def light_column(column)
+		8.times{ |d| light(d, column) }
+	end
+	
+	def light(row, col)
+		grid[row, col] = 1
+	end
+	
+	def play(button, channel=1)
+		scale = MINOR_SCALE + (MINOR_SCALE.map{|n|n+12})
+		base = 68
+		position = 8 - button
+		note = base + scale[position % scale.length]
 		@midi.play(Note.new(channel, note, 1, 100))
 	end
 end
