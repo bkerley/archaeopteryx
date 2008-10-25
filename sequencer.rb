@@ -12,13 +12,15 @@ class Sequencer < Monome::Application
 		@octaves = Array.new(16, 5)
 		@selector = 0
 		@cursor = 0
+		@solo = nil
 	end
 	
 	on :sequence do
 		device.clear
 		light_hot
 		@grids.each_with_index do |g, h|
-				g[@cursor].each_with_index do |c, r|
+			next if @solo && @solo != h
+			g[@cursor].each_with_index do |c, r|
 				next unless c
 				play(r,h)
 			end
@@ -47,6 +49,14 @@ class Sequencer < Monome::Application
 		when 3
 			@octaves[@selector] = @octaves[@selector] + 1
 			puts "octave #{@octaves[@selector]}"
+		when 4
+			if @solo
+				@solo = nil
+				puts "Solo off"
+				next
+			end
+			@solo = @selector
+			puts "Solo #{@solo}"
 		end
 	end
 	
