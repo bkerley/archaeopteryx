@@ -87,7 +87,7 @@ class Sequencer < Monome::Application
 	
 	def play(button, channel=1)
 		scale = MINOR_SCALE + (MINOR_SCALE.map{|n|n+12})
-		base = (@octaves[channel] * 12) + 4
+		base = (@octaves[channel] * 12) + 6
 		position = 8 - button
 		note = base + scale[position % scale.length]
 		@midi.play(Note.new(channel, note, 1, 100))
